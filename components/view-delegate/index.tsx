@@ -27,18 +27,22 @@ import { DelegateType } from "@/library/types";
 
 type Props = {};
 
+type ResponseType = {
+  data: DelegateType[]
+}
+
 const TableColumns = [
   { name: "#" },
   { name: "title" },
   { name: "first name" },
-  { name: "gender" },
-  { name: "email" },
-  { name: "phone" },
-  { name: "address" },
+  { name: "last name" },
+  { name: "street" },
   { name: "city" },
   { name: "state" },
   { name: "zip code" },
+  { name: "phone" },
   { name: "fax number" },
+  { name: "email" },
   { name: "option" },
 ];
 
@@ -69,7 +73,8 @@ const ViewDelegates = (props: Props) => {
   const fetchDelegates = async () => {
     try {
       const response = await fetch("http://localhost:3000/api/delegates");
-      const { data } = await response.json();
+      const {data}  = await response.json() as ResponseType;
+      console.log(data)
       setDelegates(data);
     } catch (error) {
       console.log(error);
@@ -103,35 +108,45 @@ const ViewDelegates = (props: Props) => {
             <Tbody>
               {delegates && delegates?.length > 0 ? (
                 delegates?.map((delegate, index) => {
+                 const newDelete = delegate as unknown as string[]
                   return (
                     <Tr key={index}>
                       <Td>
                         <Text whiteSpace={"nowrap"}>{index + 1}</Text>
                       </Td>
                       <Td>
-                        <Text whiteSpace={"nowrap"}>{delegate.delegateTitle}</Text>
+                        <Text whiteSpace={"nowrap"}>{newDelete[1]}</Text>
                       </Td>
                       <Td>
-                        <Text whiteSpace={"nowrap"}>{delegate.delegateFName}</Text>
+                        <Text whiteSpace={"nowrap"}>{newDelete[2]}</Text>
                       </Td>
                       <Td>
-                        <Text whiteSpace={"nowrap"}>{delegate.delegateLName}</Text>
+                        <Text whiteSpace={"nowrap"}>{newDelete[3]}</Text>
                       </Td>
 
                       <Td>
-                        <Text whiteSpace={"nowrap"}>{delegate.attEmailAddress}</Text>
+                        <Text whiteSpace={"nowrap"}>{newDelete[4]}</Text>
                       </Td>
                       <Td>
-                        <Text whiteSpace={"nowrap"}>{delegate.attTelNo}</Text>
+                        <Text whiteSpace={"nowrap"}>{newDelete[5]}</Text>
                       </Td>
                       <Td>
-                        <Text whiteSpace={"nowrap"}>{delegate.delegateCity}</Text>
+                        <Text whiteSpace={"nowrap"}>{newDelete[6]}</Text>
                       </Td>
                       <Td>
-                        <Text whiteSpace={"nowrap"}>{delegate.delegateState}</Text>
+                        <Text whiteSpace={"nowrap"}>{newDelete[7]}</Text>
                       </Td>
                       <Td>
-                        <Text whiteSpace={"nowrap"}>{delegate.delegateZipCode}</Text>
+                        <Text whiteSpace={"nowrap"}>{newDelete[8]}</Text>
+                      </Td>
+                      <Td>
+                        <Text whiteSpace={"nowrap"}>{newDelete[9]}</Text>
+                      </Td>
+                      <Td>
+                        <Text whiteSpace={"nowrap"}>{newDelete[10]}</Text>
+                      </Td>
+                      <Td>
+                        <Text whiteSpace={"nowrap"}>{newDelete[11]}</Text>
                       </Td>
                       <Td>
                         <Menu>
@@ -166,7 +181,7 @@ const ViewDelegates = (props: Props) => {
                               icon={<IoTrashBin />}
                               onClick={() => {
                                 onOpenDeleteRecord();
-                                setDelegateId(delegate.delegateNo);
+                                setDelegateId(newDelete[0]);
                               }}
                             >
                               Delete

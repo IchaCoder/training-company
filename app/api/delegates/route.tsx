@@ -1,50 +1,56 @@
 import { NextRequest, NextResponse } from "next/server";
 // const oracledb = require("oracledb");
 import dbConfig from "@/library/db-config";
-const oracledb = require("oracledb");
-
+import oracledb from "oracledb";
 type DelegateType = {
-	message: string;
-	status: number;
-	data: any;
+  message: string;
+  status: number;
+  data: any;
 };
 
 export async function GET(req: NextRequest): Promise<NextResponse<DelegateType>> {
-	let connection;
+  let connection;
 
-	try {
-		// Get a non-pooled connection
-		connection = await oracledb.getConnection(dbConfig);
+  try {
+    // Get a non-pooled connection
+    connection = await oracledb.getConnection(dbConfig);
 
-		console.log("Connection was successful!");
+    console.log("Connection was successful!");
 
-		const result = await connection.execute(`SELECT * FROM client`);
+    const result = await connection.execute(`BEGIN get_all_delegates(:p_cursor); END;`, { p_cursor: {type: oracledb.CURSOR, dir: oracledb.BIND_OUT} });
 
-		return NextResponse.json({
-			status: 200,
-			message: "successfull",
-			data: result.rows,
-		});
-	} catch (err) {
-		console.error(err);
-		return NextResponse.json({
-			status: 404,
-			message: "error",
-			data: [],
-		});
-	} finally {
-		if (connection) {
-			try {
-				await connection.close();
-			} catch (err) {
-				console.error(err);
-			}
-		}
-	}
+    const resultSet = result.outBinds.p_cursor
+    const rows = [];
 
-	// return NextResponse.json({
-	// 	status: 200,
-	// 	message: "successfull",
-	// 	data: [],
-	// });
+    if (resultSet) {
+      let row;
+      while ((row = await resultSet.getRow())) {
+        console.log(row);
+        
+        rows.push(row);
+      }
+      await resultSet.close();
+    }
+
+    return NextResponse.json({
+      status: 200,
+      message: "successful",
+      data: rows,
+    });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({
+      status: 404,
+      message: "error",
+      data: [],
+    });
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
 }
