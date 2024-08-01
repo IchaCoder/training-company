@@ -1,12 +1,11 @@
-import Form from "@/components/add-delete/form";
+import Form from "@/components/add-delegate/form";
 import Nav from "@/components/nav";
-import Image from "next/image";
 
 export default function Home() {
-	return (
-		<>
-			<Nav />
-			<Form />
-		</>
-	);
+  return (
+    <>
+      <Nav />
+      <Form />
+    </>
+  );
 }

@@ -28,8 +28,8 @@ import { DelegateType } from "@/library/types";
 type Props = {};
 
 type ResponseType = {
-  data: DelegateType[]
-}
+  data: DelegateType[];
+};
 
 const TableColumns = [
   { name: "#" },
@@ -70,11 +70,13 @@ const ViewDelegates = (props: Props) => {
     }
   };
 
+  const delegate = delegates?.find((delegate) => delegate[0] === delegateId) as unknown as string[];
+
   const fetchDelegates = async () => {
     try {
       const response = await fetch("http://localhost:3000/api/delegates");
-      const {data}  = await response.json() as ResponseType;
-      console.log(data)
+      const { data } = (await response.json()) as ResponseType;
+      console.log(data);
       setDelegates(data);
     } catch (error) {
       console.log(error);
@@ -87,9 +89,9 @@ const ViewDelegates = (props: Props) => {
 
   return (
     <>
-      <ViewRecord isOpen={isOpen} onClose={onClose} />
+      <ViewRecord delegate={delegate} isOpen={isOpen} onClose={onClose} />
       <Delete isOpen={isOpenDeleteRecord} onClose={onCloseDeleteRecord} setId={setDelegateId} id={delegateId} />
-      <Edit isOpen={isOpenEdit} onClose={onCloseEdit} id={delegateId} />
+      <Edit isOpen={isOpenEdit} onClose={onCloseEdit} delegate={delegate!} id={delegateId} />
       <Box mt={4}>
         <Text fontSize={{ base: "xl", md: "2xl" }} textAlign="center" fontWeight="bold" mb={4}>
           Delegates List
@@ -108,7 +110,7 @@ const ViewDelegates = (props: Props) => {
             <Tbody>
               {delegates && delegates?.length > 0 ? (
                 delegates?.map((delegate, index) => {
-                 const newDelete = delegate as unknown as string[]
+                  const newDelete = delegate as unknown as string[];
                   return (
                     <Tr key={index}>
                       <Td>
@@ -161,7 +163,7 @@ const ViewDelegates = (props: Props) => {
                               icon={<FiEdit2 />}
                               onClick={() => {
                                 onOpenEdit();
-                                setDelegateId(delegate.delegateNo);
+                                setDelegateId(newDelete[0]);
                               }}
                             >
                               Edit
@@ -171,6 +173,7 @@ const ViewDelegates = (props: Props) => {
                               icon={<FiEye />}
                               onClick={() => {
                                 onOpen();
+                                setDelegateId(newDelete[0]);
                               }}
                             >
                               View More
